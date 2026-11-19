@@ -1,0 +1,77 @@
+Metadata-Version: 2.4
+Name: backend
+Version: 0.1.0
+Summary: Backend de Huellas Wanka: plataforma ciudadana para reportar y dar seguimiento a puntos críticos de basura y desmontes en Huancayo (Huancayo Cercado, El Tambo, Chilca).
+Author-email: AnjhelyTR <60933316@continental.edu.pe>
+Requires-Python: >=3.14
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi>=0.165.0
+Requires-Dist: uvicorn[standard]>=0.54.0
+Requires-Dist: sqlalchemy>=2.0.40
+Requires-Dist: pydantic[email]>=2.11.0
+Requires-Dist: python-multipart>=0.0.9
+Requires-Dist: passlib[bcrypt]>=1.7.4
+Requires-Dist: python-jose[cryptography]>=3.3.0
+Requires-Dist: bcrypt==4.0.1
+
+# Huellas Wanka - Backend
+
+API REST para reportar y dar seguimiento a puntos críticos de basura y desmontes en Huancayo
+(distritos: Huancayo Cercado, El Tambo y Chilca). Proyecto académico de Programación Web,
+Universidad Continental. El frontend Angular corre en `http://localhost:4200`.
+
+## Requisitos
+
+- Python 3.14+
+- [uv](https://github.com/astral-sh/uv)
+
+## Instalación
+
+```bash
+cd backend
+uv sync
+```
+
+## Ejecución
+
+```bash
+uv run uvicorn backend.main:app --reload
+```
+
+La API queda disponible en `http://localhost:8000` y la documentación interactiva (Swagger UI) en
+`http://localhost:8000/docs`.
+
+## Credenciales de desarrollo (seed)
+
+El seed ejecuta al arrancar y crea un administrador predeterminado (**solo desarrollo**, cambiar en
+producción):
+
+| Email | Contraseña | Rol |
+|-------|------------|-----|
+| admin@huellaswanka.pe | admin123 | Administrador |
+
+## Endpoints principales
+
+| Método | Endpoint | Acceso | Descripción |
+|--------|----------|--------|-------------|
+| POST | `/auth/registro` | Público | Registra un ciudadano (rol fijo, no elegible) |
+| POST | `/auth/login` | Público | OAuth2 login, devuelve JWT |
+| GET | `/distritos` | Público | Catálogo de distritos |
+| GET | `/tipos-residuo` | Público | Tipos de residuo |
+| GET | `/estados` | Público | Estados de reporte |
+| POST | `/reportes` | Autenticado | Crea reporte con foto (multipart/form-data) |
+| GET | `/reportes` | Público | Listado con filtros y paginación |
+| GET | `/reportes/estadisticas` | Público | Indicadores de reportes |
+| GET | `/reportes/{id}` | Público | Detalle de un reporte |
+| PATCH | `/reportes/{id}/estado` | Administrador | Cambia estado (Pendiente → En proceso → Atendido) |
+| DELETE | `/reportes/{id}` | Autor o Admin | Elimina un reporte |
+| GET | `/usuarios/me` | Autenticado | Perfil del usuario autenticado |
+
+## Seguridad
+
+- Contraseñas con bcrypt y autenticación JWT (HS256).
+- Todo el acceso a datos usa SQLAlchemy ORM (consultas parametrizadas): previene SQL injection.
+- Sanitizado de texto libre con `html.escape` en los esquemas Pydantic: previene XSS.
+- Validación de tipo de contenido, tamaño (máx. 5 MB) y firma real (magic bytes) de las imágenes.
+- Control de acceso por roles (`Administrador` / `Ciudadano`).
+- Privacidad: los endpoints públicos no exponen emails ni contraseñas de los autores.

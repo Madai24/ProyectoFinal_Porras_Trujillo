@@ -1,0 +1,30 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Backend de Huellas Wanka: plataforma ciudadana para reportar y dar seguimiento a puntos críticos de basura y desmontes en Huancayo (Huancayo Cercado, El Tambo, Chilca)."
+readme = "README.md"
+authors = [
+    { name = "AnjhelyTR", email = "60933316@continental.edu.pe" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi>=0.165.0",
+    "uvicorn[standard]>=0.54.0",
+    "sqlalchemy>=2.0.40",
+    "pydantic[email]>=2.11.0",
+    "python-multipart>=0.0.9",
+    "passlib[bcrypt]>=1.7.4",
+    "python-jose[cryptography]>=3.3.0",
+    "bcrypt==4.0.1",
+]
+
+[project.scripts]
+backend = "backend.main:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["backend*"]
