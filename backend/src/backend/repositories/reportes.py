@@ -1,21 +1,27 @@
-"""Consultas ORM de reportes."""
-from sqlalchemy import func
+"""Consultas ORM de reportes (solo reportes con Activo = 1; el borrado es lógico)."""
+from sqlalchemy import func, true
 from sqlalchemy.orm import Session, joinedload
 
-from backend.models.models import Distrito, EstadoReporte, Reporte
+from backend.models.models import ESTADO_ATENDIDO, Distrito, EstadoAtencion, Reporte
 
 
 def _consulta_base(db: Session):
-    return db.query(Reporte).options(
-        joinedload(Reporte.distrito),
-        joinedload(Reporte.tipo_residuo),
-        joinedload(Reporte.estado),
-        joinedload(Reporte.usuario),
+    return (
+        db.query(Reporte)
+        .options(
+            joinedload(Reporte.distrito),
+            joinedload(Reporte.tipo_residuo),
+            joinedload(Reporte.estado),
+            joinedload(Reporte.cuadrilla),
+            joinedload(Reporte.usuario),
+            joinedload(Reporte.evidencias),
+        )
+        .filter(Reporte.activo == true())
     )
 
 
 def obtener_por_id(db: Session, reporte_id: int) -> Reporte | None:
-    """Devuelve un reporte por id con sus catálogos y autor cargados."""
+    """Devuelve un reporte activo por id con sus catálogos, evidencias y autor cargados."""
     return _consulta_base(db).filter(Reporte.id == reporte_id).first()
 
 
@@ -27,43 +33,71 @@ def listar(
     estado_id: int | None = None,
 ):
     """Lista reportes con filtros opcionales, paginación y orden descendente por fecha."""
-    consulta = _consulta_base(db)
+    ids = db.query(Reporte.id).filter(Reporte.activo == true())
     if distrito_id is not None:
-        consulta = consulta.filter(Reporte.distrito_id == distrito_id)
+        ids = ids.filter(Reporte.distrito_id == distrito_id)
     if estado_id is not None:
-        consulta = consulta.filter(Reporte.estado_id == estado_id)
-    return consulta.order_by(Reporte.fecha_creacion.desc()).offset(skip).limit(limit).all()
+        ids = ids.filter(Reporte.estado_id == estado_id)
+    ids = ids.order_by(Reporte.fecha_reporte.desc(), Reporte.id.desc()).offset(skip).limit(limit).all()
+    orden = [fila[0] for fila in ids]
+    if not orden:
+        return []
+    # La paginación se hace sobre ids para no romperla con el joinedload de colecciones.
+    reportes = {r.id: r for r in _consulta_base(db).filter(Reporte.id.in_(orden)).all()}
+    return [reportes[i] for i in orden]
+
+
+def contar_activos(db: Session) -> int:
+    """Total de reportes activos."""
+    return db.query(func.count(Reporte.id)).filter(Reporte.activo == true()).scalar() or 0
 
 
 def contar_por_estado(db: Session) -> dict[str, int]:
-    """Conteo de reportes agrupado por nombre de estado."""
+    """Conteo de reportes activos agrupado por nombre de estado."""
     filas = (
-        db.query(EstadoReporte.nombre, func.count(Reporte.id))
-        .outerjoin(Reporte, Reporte.estado_id == EstadoReporte.id)
-        .group_by(EstadoReporte.id, EstadoReporte.nombre)
+        db.query(EstadoAtencion.nombre, func.count(Reporte.id))
+        .outerjoin(Reporte, (Reporte.estado_id == EstadoAtencion.id) & (Reporte.activo == true()))
+        .group_by(EstadoAtencion.id, EstadoAtencion.nombre)
         .all()
     )
     return {nombre: cantidad for nombre, cantidad in filas}
 
 
 def contar_por_distrito(db: Session) -> dict[str, int]:
-    """Conteo de reportes agrupado por nombre de distrito."""
+    """Conteo de reportes activos agrupado por nombre de distrito."""
     filas = (
         db.query(Distrito.nombre, func.count(Reporte.id))
-        .outerjoin(Reporte, Reporte.distrito_id == Distrito.id)
+        .outerjoin(Reporte, (Reporte.distrito_id == Distrito.id) & (Reporte.activo == true()))
         .group_by(Distrito.id, Distrito.nombre)
         .all()
     )
     return {nombre: cantidad for nombre, cantidad in filas}
 
 
-def tiempo_promedio_atencion_horas(db: Session) -> float | None:
-    """Promedio de horas entre la creación y la atención de reportes atendidos."""
-    resultado = (
-        db.query(func.avg(func.julianday(Reporte.fecha_atencion) - func.julianday(Reporte.fecha_creacion)) * 24)
-        .filter(Reporte.fecha_atencion.isnot(None))
+def toneladas_totales(db: Session) -> float:
+    """Suma de toneladas estimadas de los reportes activos."""
+    total = (
+        db.query(func.coalesce(func.sum(Reporte.toneladas_estimadas), 0))
+        .filter(Reporte.activo == true())
         .scalar()
     )
-    if resultado is None:
+    return round(float(total), 2)
+
+
+def tiempo_promedio_atencion_horas(db: Session) -> float | None:
+    """Promedio de horas entre el reporte y su última actualización, para reportes recuperados."""
+    filas = (
+        db.query(Reporte.fecha_reporte, Reporte.fecha_actualizacion)
+        .join(EstadoAtencion, Reporte.estado_id == EstadoAtencion.id)
+        .filter(
+            Reporte.activo == true(),
+            EstadoAtencion.nombre == ESTADO_ATENDIDO,
+            Reporte.fecha_reporte.isnot(None),
+            Reporte.fecha_actualizacion.isnot(None),
+        )
+        .all()
+    )
+    if not filas:
         return None
-    return round(float(resultado), 2)
+    horas = [(fin - inicio).total_seconds() / 3600 for inicio, fin in filas]
+    return round(sum(horas) / len(horas), 2)

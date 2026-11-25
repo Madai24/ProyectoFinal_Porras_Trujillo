@@ -7,15 +7,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from backend.apis import auth, catalogos, reportes, usuarios
-from backend.core.config import UPLOADS_DIR
-from backend.core.database import Base, SessionLocal, engine
+from backend.config import UPLOADS_DIR
+from backend.database import SessionLocal
 from backend.seed import ejecutar_seed
 
 
 @asynccontextmanager
 async def lifespan(aplicacion: FastAPI):
-    """Crea las tablas, ejecuta el seed y asegura el directorio de uploads al arrancar."""
-    Base.metadata.create_all(bind=engine)
+    """Carga los distritos iniciales y asegura el directorio de uploads al arrancar.
+
+    Las tablas las define HuellasWankaDB.sql; la aplicación no las crea.
+    """
     db = SessionLocal()
     try:
         ejecutar_seed(db)

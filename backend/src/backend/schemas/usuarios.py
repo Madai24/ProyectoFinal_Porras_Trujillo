@@ -11,27 +11,29 @@ def _sanitizar_texto(texto: str) -> str:
 
 
 class UsuarioCreate(BaseModel):
-    nombre_completo: str = Field(min_length=2, max_length=150)
-    email: EmailStr
+    nombres: str = Field(min_length=2, max_length=100)
+    apellidos: str = Field(min_length=2, max_length=100)
+    correo: EmailStr
     password: str = Field(min_length=8, max_length=128)
+    telefono: str | None = Field(default=None, max_length=15)
 
-    @field_validator("nombre_completo", mode="before")
+    @field_validator("nombres", "apellidos", "telefono", mode="before")
     @classmethod
-    def _limpiar_nombre(cls, valor):
+    def _limpiar_texto(cls, valor):
         if not isinstance(valor, str):
             return valor
-        return _sanitizar_texto(valor)
+        return _sanitizar_texto(valor) or None
 
-    @field_validator("email", mode="before")
+    @field_validator("correo", mode="before")
     @classmethod
-    def _normalizar_email(cls, valor):
+    def _normalizar_correo(cls, valor):
         if not isinstance(valor, str):
             return valor
         return valor.strip().lower()
 
 
 class UsuarioLogin(BaseModel):
-    email: EmailStr
+    correo: EmailStr
     password: str
 
 
@@ -39,10 +41,12 @@ class UsuarioOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    nombre_completo: str
-    email: str
+    nombres: str
+    apellidos: str
+    correo: str
+    telefono: str | None = None
     rol: str
-    fecha_registro: datetime
+    fecha_registro: datetime | None = None
 
 
 class Token(BaseModel):

@@ -8,9 +8,9 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from backend.core.config import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY
-from backend.core.database import get_db
-from backend.models.models import Usuario
+from backend.config import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY
+from backend.database import get_db
+from backend.models.models import ROL_ADMIN, Usuario
 from backend.repositories.usuarios import get_usuario_por_email
 
 ALGORITHM = "HS256"
@@ -60,17 +60,17 @@ def get_current_user(
     payload = decode_access_token(token)
     if payload is None:
         raise exception_credenciales
-    email = payload.get("sub")
-    if not isinstance(email, str):
+    correo = payload.get("sub")
+    if not isinstance(correo, str):
         raise exception_credenciales
-    usuario = get_usuario_por_email(db, email)
-    if usuario is None:
+    usuario = get_usuario_por_email(db, correo)
+    if usuario is None or not usuario.activo:
         raise exception_credenciales
     return usuario
 
 
 def require_admin(usuario: Annotated[Usuario, Depends(get_current_user)]) -> Usuario:
     """Garantiza que el usuario autenticado tenga el rol Administrador."""
-    if usuario.rol.nombre != "Administrador":
+    if usuario.rol.nombre != ROL_ADMIN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Solo un administrador puede realizar esta acción")
     return usuario
