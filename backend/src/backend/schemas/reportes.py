@@ -4,7 +4,7 @@ from html import escape
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from backend.models.models import NivelGravedad
+from backend.models.models import NivelUrgencia
 
 
 def _sanitizar_texto(texto: str) -> str:
@@ -24,25 +24,45 @@ class TipoResiduoOut(BaseModel):
 
     id: int
     nombre: str
+    descripcion: str | None = None
 
 
-class EstadoReporteOut(BaseModel):
+class EstadoAtencionOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
     nombre: str
 
 
+class CuadrillaOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    nombre: str
+    responsable: str | None = None
+    telefono_contacto: str | None = None
+
+
+class EvidenciaOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    ruta_archivo: str
+    tipo_evidencia: str | None = None
+    fecha_subida: datetime | None = None
+
+
 class ReporteCreate(BaseModel):
-    titulo: str = Field(min_length=5, max_length=120)
-    descripcion: str = Field(min_length=10, max_length=1000)
     direccion: str = Field(min_length=5, max_length=255)
-    referencia: str = Field(default="", max_length=255)
-    nivel_gravedad: NivelGravedad
+    referencia_visual: str | None = Field(default=None, max_length=255)
+    nivel_urgencia: NivelUrgencia
     distrito_id: int
     tipo_residuo_id: int
+    latitud: float | None = Field(default=None, ge=-90, le=90)
+    longitud: float | None = Field(default=None, ge=-180, le=180)
+    toneladas_estimadas: float = Field(default=0, ge=0, le=9999.99)
 
-    @field_validator("titulo", "descripcion", "direccion", "referencia", mode="before")
+    @field_validator("direccion", "referencia_visual", mode="before")
     @classmethod
     def _sanitizar_campos_texto(cls, valor):
         if not isinstance(valor, str):
@@ -54,28 +74,30 @@ class ReporteOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    titulo: str
-    descripcion: str
     direccion: str
-    referencia: str
-    nivel_gravedad: NivelGravedad
-    url_imagen: str
+    referencia_visual: str | None = None
+    nivel_urgencia: NivelUrgencia
     latitud: float | None = None
     longitud: float | None = None
-    fecha_creacion: datetime
-    fecha_atencion: datetime | None = None
+    toneladas_estimadas: float | None = None
+    fecha_reporte: datetime | None = None
+    fecha_actualizacion: datetime | None = None
     distrito: DistritoOut
     tipo_residuo: TipoResiduoOut
-    estado: EstadoReporteOut
-    autor: str  # Solo el nombre del autor; nunca email ni hash
+    estado: EstadoAtencionOut
+    cuadrilla: CuadrillaOut | None = None
+    evidencias: list[EvidenciaOut] = []
+    autor: str | None = None  # Solo nombres y apellidos; nunca correo ni hash. None si es anónimo
 
 
 class EstadoUpdate(BaseModel):
     estado_id: int
+    cuadrilla_id: int | None = None
 
 
 class EstadisticasOut(BaseModel):
     total_reportes: int
+    toneladas_estimadas_total: float
     por_estado: dict[str, int]
     por_distrito: dict[str, int]
     porcentaje_atendidos: float | None = None

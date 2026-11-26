@@ -1,7 +1,10 @@
 README.md
 pyproject.toml
 src/backend/__init__.py
+src/backend/config.py
+src/backend/database.py
 src/backend/main.py
+src/backend/security.py
 src/backend/seed.py
 src/backend.egg-info/PKG-INFO
 src/backend.egg-info/SOURCES.txt
@@ -14,10 +17,6 @@ src/backend/apis/auth.py
 src/backend/apis/catalogos.py
 src/backend/apis/reportes.py
 src/backend/apis/usuarios.py
-src/backend/core/__init__.py
-src/backend/core/config.py
-src/backend/core/database.py
-src/backend/core/security.py
 src/backend/models/__init__.py
 src/backend/models/models.py
 src/backend/repositories/__init__.py
