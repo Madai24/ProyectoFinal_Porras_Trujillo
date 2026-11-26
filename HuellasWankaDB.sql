@@ -84,3 +84,54 @@ CREATE TABLE Evidencias (
     CONSTRAINT FK_Evidencias_Reportes FOREIGN KEY (IdReporte) REFERENCES Reportes(IdReporte) ON DELETE CASCADE
 );
 GO
+
+-- =====================================================================
+-- DATOS INICIALES (catalogos). Se pueden ejecutar varias veces: solo
+-- insertan las filas que aun no existen.
+-- =====================================================================
+
+-- Roles
+INSERT INTO Roles (NombreRol, Descripcion)
+SELECT v.NombreRol, v.Descripcion
+FROM (VALUES
+    ('Ciudadano',     'Usuario que reporta puntos criticos de basura'),
+    ('Junta Vecinal', 'Representante vecinal que da seguimiento a reportes'),
+    ('Administrador', 'Gestiona reportes, estados y cuadrillas')
+) AS v(NombreRol, Descripcion)
+WHERE NOT EXISTS (SELECT 1 FROM Roles r WHERE r.NombreRol = v.NombreRol);
+GO
+
+-- Estados de atencion (el orden importa: IdEstado = 1 es el valor por defecto de Reportes)
+IF NOT EXISTS (SELECT 1 FROM EstadosAtencion WHERE NombreEstado = 'Pendiente de Atención')
+    INSERT INTO EstadosAtencion (NombreEstado) VALUES ('Pendiente de Atención');
+IF NOT EXISTS (SELECT 1 FROM EstadosAtencion WHERE NombreEstado = 'En Proceso')
+    INSERT INTO EstadosAtencion (NombreEstado) VALUES ('En Proceso');
+IF NOT EXISTS (SELECT 1 FROM EstadosAtencion WHERE NombreEstado = 'Recuperado')
+    INSERT INTO EstadosAtencion (NombreEstado) VALUES ('Recuperado');
+GO
+
+-- Tipos de residuo
+INSERT INTO TiposResiduo (NombreTipo, Descripcion)
+SELECT v.NombreTipo, v.Descripcion
+FROM (VALUES
+    ('Residuos domésticos', 'Basura común de hogares'),
+    ('Desmonte',            'Escombros y material de construcción'),
+    ('Residuos orgánicos',  'Restos de comida y vegetación'),
+    ('Residuos peligrosos', 'Residuos hospitalarios o químicos')
+) AS v(NombreTipo, Descripcion)
+WHERE NOT EXISTS (SELECT 1 FROM TiposResiduo t WHERE t.NombreTipo = v.NombreTipo);
+GO
+
+-- Distritos de la provincia de Huancayo
+INSERT INTO Distritos (NombreDistrito)
+SELECT v.NombreDistrito
+FROM (VALUES
+    ('Huancayo'), ('Carhuacallanga'), ('Chacapampa'), ('Chicche'), ('Chilca'),
+    ('Chongos Alto'), ('Chupuro'), ('Colca'), ('Cullhuas'), ('El Tambo'),
+    ('Huacrapuquio'), ('Hualhuas'), ('Huancán'), ('Huasicancha'), ('Huayucachi'),
+    ('Ingenio'), ('Pariahuanca'), ('Pilcomayo'), ('Pucará'), ('Quichuay'),
+    ('Quilcas'), ('San Agustín de Cajas'), ('San Jerónimo de Tunán'),
+    ('Santo Domingo de Acobamba'), ('Saño'), ('Sapallanga'), ('Sicaya'), ('Viques')
+) AS v(NombreDistrito)
+WHERE NOT EXISTS (SELECT 1 FROM Distritos d WHERE d.NombreDistrito = v.NombreDistrito);
+GO

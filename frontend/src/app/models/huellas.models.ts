@@ -28,22 +28,28 @@ export interface UsuarioOut {
   fecha_registro?: string | null;
 }
 
+export interface EvidenciaOut {
+  id: number;
+  ruta_archivo: string;
+  tipo_evidencia?: string | null;
+  fecha_subida?: string | null;
+}
+
 export interface ReporteOut {
   id: number;
-  titulo: string;
-  descripcion: string;
   direccion: string;
-  referencia: string;
-  nivel_gravedad: NivelGravedad;
-  url_imagen: string;
+  referencia_visual?: string | null;
+  nivel_urgencia: NivelGravedad;
   latitud?: number | null;
   longitud?: number | null;
-  fecha_creacion: string;
-  fecha_atencion?: string | null;
+  toneladas_estimadas?: number | null;
+  fecha_reporte?: string | null;
+  fecha_actualizacion?: string | null;
   distrito: Catalogo;
   tipo_residuo: Catalogo;
   estado: Catalogo;
-  autor: string;
+  evidencias: EvidenciaOut[];
+  autor?: string | null;
 }
 
 export interface EstadisticasOut {

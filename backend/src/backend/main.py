@@ -8,21 +8,15 @@ from fastapi.staticfiles import StaticFiles
 
 from backend.apis import auth, catalogos, reportes, usuarios
 from backend.config import UPLOADS_DIR
-from backend.database import SessionLocal
-from backend.seed import ejecutar_seed
 
 
 @asynccontextmanager
 async def lifespan(aplicacion: FastAPI):
-    """Carga los distritos iniciales y asegura el directorio de uploads al arrancar.
+    """Asegura el directorio de uploads al arrancar.
 
-    Las tablas las define HuellasWankaDB.sql; la aplicación no las crea.
+    Tablas y datos viven en la base HuellasWankaDB (script HuellasWankaDB.sql);
+    la aplicación no crea, altera ni inserta datos iniciales.
     """
-    db = SessionLocal()
-    try:
-        ejecutar_seed(db)
-    finally:
-        db.close()
     os.makedirs(UPLOADS_DIR, exist_ok=True)
     yield
 

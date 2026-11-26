@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -16,6 +16,7 @@ import { Catalogo, EstadisticasOut, ReporteOut } from '../../models/huellas.mode
 export class Dashboard implements OnInit {
   private reportesService = inject(ReportesService);
   private catalogosService = inject(CatalogosService);
+  private cdr = inject(ChangeDetectorRef);
 
   reportes: ReporteOut[] = [];
   estadisticas: EstadisticasOut | null = null;
@@ -34,12 +35,21 @@ export class Dashboard implements OnInit {
   }
 
   cargarCatalogos() {
-    this.catalogosService.getDistritos().subscribe(data => this.distritos = data);
-    this.catalogosService.getEstados().subscribe(data => this.estados = data);
+    this.catalogosService.getDistritos().subscribe(data => {
+      this.distritos = data;
+      this.cdr.markForCheck();
+    });
+    this.catalogosService.getEstados().subscribe(data => {
+      this.estados = data;
+      this.cdr.markForCheck();
+    });
   }
 
   cargarEstadisticas() {
-    this.reportesService.obtenerEstadisticas().subscribe(data => this.estadisticas = data);
+    this.reportesService.obtenerEstadisticas().subscribe(data => {
+      this.estadisticas = data;
+      this.cdr.markForCheck();
+    });
   }
 
   cargarReportes() {
@@ -48,8 +58,12 @@ export class Dashboard implements OnInit {
       next: (data) => {
         this.reportes = data;
         this.cargando = false;
+        this.cdr.markForCheck();
       },
-      error: () => this.cargando = false
+      error: () => {
+        this.cargando = false;
+        this.cdr.markForCheck();
+      }
     });
   }
 

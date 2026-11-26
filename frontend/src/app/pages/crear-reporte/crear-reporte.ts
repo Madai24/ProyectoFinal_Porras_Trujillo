@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -23,6 +23,7 @@ export class CrearReporte implements OnInit {
   private catalogosService = inject(CatalogosService);
   private notificaciones = inject(NotificacionesService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   distritos: Catalogo[] = [];
   tiposResiduo: Catalogo[] = [];
@@ -40,11 +41,17 @@ export class CrearReporte implements OnInit {
 
   ngOnInit(): void {
     this.catalogosService.getDistritos().subscribe({
-      next: (d) => (this.distritos = d),
+      next: (d) => {
+        this.distritos = d;
+        this.cdr.markForCheck();
+      },
       error: (err) => this.notificaciones.error(mensajeError(err, 'No se pudieron cargar los distritos.'))
     });
     this.catalogosService.getTiposResiduo().subscribe({
-      next: (t) => (this.tiposResiduo = t),
+      next: (t) => {
+        this.tiposResiduo = t;
+        this.cdr.markForCheck();
+      },
       error: (err) => this.notificaciones.error(mensajeError(err, 'No se pudieron cargar los tipos de residuo.'))
     });
   }
@@ -104,6 +111,7 @@ export class CrearReporte implements OnInit {
     this.reportesService.crear(formData).subscribe({
       next: () => {
         this.cargando = false;
+        this.cdr.markForCheck();
         this.notificaciones.exito('¡Reporte registrado correctamente!');
         this.router.navigate(['/']);
       },
@@ -112,6 +120,7 @@ export class CrearReporte implements OnInit {
         this.error = err.status === 401
           ? 'Debes iniciar sesión para crear un reporte.'
           : mensajeError(err, 'No se pudo crear el reporte.');
+        this.cdr.markForCheck();
         this.notificaciones.error(this.error);
       }
     });

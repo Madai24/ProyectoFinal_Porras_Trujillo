@@ -2,34 +2,38 @@
 
 @if (reporte) {
   <div class="detalle-card">
-    @if (reporte.url_imagen) {
+    @if (reporte.evidencias.length > 0) {
       <img
-        [src]="obtenerUrlImagen(reporte.url_imagen)"
+        [src]="obtenerUrlImagen(reporte.evidencias[0].ruta_archivo)"
         alt="Evidencia del reporte"
-        [title]="reporte.titulo"
+        [title]="reporte.direccion"
         class="detalle-img"
       />
     }
     <div class="detalle-info">
       <div class="badges">
         <span class="badge estado">{{ reporte.estado.nombre }}</span>
-        <span class="badge gravedad">{{ reporte.nivel_gravedad }}</span>
+        <span class="badge gravedad">{{ reporte.nivel_urgencia }}</span>
       </div>
 
-      <h2>{{ reporte.titulo }}</h2>
-      <p class="desc">{{ reporte.descripcion }}</p>
+      <h2>{{ reporte.tipo_residuo.nombre }} - {{ reporte.distrito.nombre }}</h2>
 
       <div class="meta-lista">
         <div><strong>Distrito:</strong> {{ reporte.distrito.nombre }}</div>
         <div><strong>Dirección:</strong> {{ reporte.direccion }}</div>
-        @if (reporte.referencia) {
-          <div><strong>Referencia:</strong> {{ reporte.referencia }}</div>
+        @if (reporte.referencia_visual) {
+          <div><strong>Referencia:</strong> {{ reporte.referencia_visual }}</div>
         }
-        <div>
-          <strong>Fecha:</strong>
-          {{ reporte.fecha_creacion + 'Z' | date: 'medium' : 'America/Lima' }}
-        </div>
-        <div><strong>Reportado por:</strong> {{ reporte.autor }}</div>
+        @if (reporte.toneladas_estimadas) {
+          <div><strong>Toneladas estimadas:</strong> {{ reporte.toneladas_estimadas }}</div>
+        }
+        @if (reporte.fecha_reporte) {
+          <div>
+            <strong>Fecha:</strong>
+            {{ reporte.fecha_reporte + 'Z' | date: 'medium' : 'America/Lima' }}
+          </div>
+        }
+        <div><strong>Reportado por:</strong> {{ reporte.autor || 'Anónimo' }}</div>
       </div>
 
       @if (

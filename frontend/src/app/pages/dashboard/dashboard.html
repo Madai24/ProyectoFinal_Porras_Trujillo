@@ -45,22 +45,22 @@
   <div class="reportes-grid">
     @for (rep of reportes; track rep.id) {
       <article class="reporte-card">
-        @if (rep.url_imagen) {
+        @if (rep.evidencias.length > 0) {
           <img
-            [src]="obtenerUrlImagen(rep.url_imagen)"
+            [src]="obtenerUrlImagen(rep.evidencias[0].ruta_archivo)"
             alt="Foto del reporte"
-            [title]="rep.titulo"
+            [title]="rep.direccion"
             class="reporte-img"
           />
         }
         <div class="reporte-body">
           <div class="badges">
             <span class="badge estado">{{ rep.estado.nombre }}</span>
-            <span class="badge gravedad" [class]="rep.nivel_gravedad.toLowerCase()">
-              {{ rep.nivel_gravedad }}
+            <span class="badge gravedad" [class]="rep.nivel_urgencia.toLowerCase()">
+              {{ rep.nivel_urgencia }}
             </span>
           </div>
-          <h3>{{ rep.titulo }}</h3>
+          <h3>{{ rep.tipo_residuo.nombre }}</h3>
           <p class="ubicacion">📍 {{ rep.distrito.nombre }} - {{ rep.direccion }}</p>
           <p class="residuo">🗑️ {{ rep.tipo_residuo.nombre }}</p>
           <a [routerLink]="['/reporte', rep.id]" class="btn-ver">Ver detalle</a>
