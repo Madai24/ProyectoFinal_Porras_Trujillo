@@ -6,16 +6,7 @@
     <div class="alerta-error">{{ error }}</div>
   }
 
-  <form (ngSubmit)="enviarReporte()">
-    <label>Título del reporte *</label>
-    <input
-      type="text"
-      [(ngModel)]="titulo"
-      name="titulo"
-      required
-      placeholder="Ej. Acumulación de desmonte en esquina"
-    />
-
+  <form (ngSubmit)="enviarReporte()" novalidate>
     <label>Distrito *</label>
     <select title="Distrito" [(ngModel)]="distrito_id" name="distrito_id" required>
       <option [ngValue]="undefined" disabled>Seleccione un distrito</option>
@@ -56,17 +47,18 @@
       placeholder="Ej. Frente al parque..."
     />
 
-    <label>Descripción detallada *</label>
-    <textarea
-      [(ngModel)]="descripcion"
-      name="descripcion"
-      rows="3"
-      required
-      placeholder="Describe la situación..."
-    ></textarea>
+    <label>Toneladas estimadas (opcional)</label>
+    <input
+      type="number"
+      [(ngModel)]="toneladas"
+      name="toneladas"
+      min="0"
+      max="9999.99"
+      step="0.01"
+    />
 
-    <label>Fotografía de evidencia</label>
-    <input type="file" title="Subir fotografía" accept="image/*" (change)="onFileChange($event)" />
+    <label>Fotografía de evidencia (JPG, PNG o WebP, máx. 5 MB)</label>
+    <input type="file" title="Subir fotografía" accept="image/jpeg,image/png,image/webp" (change)="onFileChange($event)" />
 
     <button type="submit" [disabled]="cargando">
       {{ cargando ? 'Enviando reporte...' : 'Publicar Reporte' }}

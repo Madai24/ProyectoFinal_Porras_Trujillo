@@ -6,7 +6,7 @@
     <div class="alerta-error">{{ error }}</div>
   }
 
-  <form (ngSubmit)="iniciarSesion()">
+  <form (ngSubmit)="iniciarSesion()" novalidate>
     <label>Correo electrónico *</label>
     <input
       type="email"

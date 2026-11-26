@@ -11,17 +11,21 @@ export interface TokenResponse {
 }
 
 export interface UsuarioCreate {
-  nombre_completo: string;
-  email: string;
+  nombres: string;
+  apellidos: string;
+  correo: string;
   password: string;
+  telefono?: string | null;
 }
 
 export interface UsuarioOut {
   id: number;
-  nombre_completo: string;
-  email: string;
+  nombres: string;
+  apellidos: string;
+  correo: string;
+  telefono?: string | null;
   rol: string;
-  fecha_registro: string;
+  fecha_registro?: string | null;
 }
 
 export interface ReporteOut {

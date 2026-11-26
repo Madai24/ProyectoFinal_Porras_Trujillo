@@ -18,3 +18,13 @@
 <main class="contenedor">
   <router-outlet />
 </main>
+
+<div class="avisos" aria-live="polite">
+  @for (a of notificaciones.avisos(); track a.id) {
+    <div class="aviso" [class.aviso-exito]="a.tipo === 'exito'" [class.aviso-error]="a.tipo === 'error'" [class.aviso-info]="a.tipo === 'info'" role="alert">
+      <span class="aviso-icono">{{ a.tipo === 'exito' ? '✅' : a.tipo === 'error' ? '⚠️' : 'ℹ️' }}</span>
+      <span class="aviso-texto">{{ a.texto }}</span>
+      <button type="button" class="aviso-cerrar" (click)="notificaciones.cerrar(a.id)" aria-label="Cerrar">×</button>
+    </div>
+  }
+</div>

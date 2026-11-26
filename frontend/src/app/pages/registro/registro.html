@@ -6,34 +6,60 @@
     <div class="alerta-error">{{ error }}</div>
   }
 
-  <form (ngSubmit)="registrar()">
-    <label>Nombre completo *</label>
+  <form (ngSubmit)="registrar()" novalidate>
+    <label>Nombres *</label>
     <input
       type="text"
-      [(ngModel)]="nombre_completo"
-      name="nombre_completo"
-      required
-      placeholder="Ej. Juan Pérez"
+      [(ngModel)]="nombres"
+      name="nombres"
+      maxlength="100"
+      placeholder="Ej. Juan Carlos"
+    />
+
+    <label>Apellidos *</label>
+    <input
+      type="text"
+      [(ngModel)]="apellidos"
+      name="apellidos"
+      maxlength="100"
+      placeholder="Ej. Pérez Quispe"
     />
 
     <label>Correo electrónico *</label>
     <input
       type="email"
-      [(ngModel)]="email"
-      name="email"
-      required
+      [(ngModel)]="correo"
+      name="correo"
       placeholder="correo@ejemplo.com"
     />
 
-    <label>Contraseña (mínimo 8 caracteres) *</label>
+    <label>Teléfono (opcional)</label>
+    <input
+      type="tel"
+      [(ngModel)]="telefono"
+      name="telefono"
+      maxlength="15"
+      placeholder="Ej. 987654321"
+    />
+
+    <label>Contraseña *</label>
     <input
       type="password"
       [(ngModel)]="password"
       name="password"
-      minlength="8"
-      required
       placeholder="********"
     />
+
+    <ul class="reglas-password">
+      <li [class.cumple]="passwordLongitudOk">
+        {{ passwordLongitudOk ? '✔' : '✖' }}
+        Entre {{ passwordMin }} y {{ passwordMax }} caracteres
+        @if (password.length > 0) { <span>(llevas {{ password.length }})</span> }
+      </li>
+    </ul>
+    <small class="ayuda-password">
+      No se exigen mayúsculas, números ni símbolos, pero te recomendamos usarlos.
+    </small>
 
     <button type="submit" [disabled]="cargando">
       {{ cargando ? 'Registrando...' : 'Registrarse' }}

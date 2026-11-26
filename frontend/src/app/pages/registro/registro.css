@@ -5,3 +5,7 @@
 .auth-card button { margin-top: 0.5rem; padding: 0.8rem; background: #2d6a4f; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; }
 .alerta-error { background: #ffe3e3; color: #c92a2a; padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem; }
 .auth-link { margin-top: 1rem; text-align: center; font-size: 0.9rem; }
+.reglas-password { list-style: none; margin: 0; padding: 0; font-size: 0.9rem; }
+.reglas-password li { color: #c92a2a; }
+.reglas-password li.cumple { color: #2b8a3e; }
+.ayuda-password { color: #666; font-size: 0.8rem; margin-top: -0.4rem; }

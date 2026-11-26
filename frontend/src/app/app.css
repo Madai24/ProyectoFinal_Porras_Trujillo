@@ -13,3 +13,11 @@
 .btn-primario { background-color: #40916c; color: white !important; padding: 0.5rem 1rem; border-radius: 6px; }
 .btn-salir { background: transparent; border: 1px solid #95d5b2; color: #d8f3dc; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; }
 .contenedor { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; font-family: system-ui, sans-serif; }
+
+.avisos { position: fixed; top: 1rem; right: 1rem; z-index: 1000; display: flex; flex-direction: column; gap: 0.6rem; max-width: 380px; font-family: system-ui, sans-serif; }
+.aviso { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.8rem 1rem; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18); border-left: 5px solid; background: white; }
+.aviso-exito { border-color: #2b8a3e; background: #ebfbee; color: #1b5e20; }
+.aviso-error { border-color: #c92a2a; background: #fff0f0; color: #a61e1e; }
+.aviso-info { border-color: #1971c2; background: #e7f5ff; color: #1864ab; }
+.aviso-texto { flex: 1; font-size: 0.95rem; line-height: 1.35; }
+.aviso-cerrar { background: transparent; border: none; font-size: 1.3rem; line-height: 1; cursor: pointer; color: inherit; }
