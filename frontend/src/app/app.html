@@ -1,0 +1,20 @@
+<header class="navbar">
+  <div class="nav-brand">
+    <a routerLink="/">🌱 Huellas Wanka</a>
+  </div>
+  <nav class="nav-links">
+    <a routerLink="/">Reportes</a>
+    @if (authService.estaAutenticado()) {
+      <a routerLink="/nuevo-reporte" class="btn-primario">+ Nuevo Reporte</a>
+      <a routerLink="/perfil">Mi Perfil</a>
+      <button (click)="salir()" class="btn-salir">Cerrar sesión</button>
+    } @else {
+      <a routerLink="/login">Iniciar Sesión</a>
+      <a routerLink="/registro" class="btn-primario">Registrarse</a>
+    }
+  </nav>
+</header>
+
+<main class="contenedor">
+  <router-outlet />
+</main>

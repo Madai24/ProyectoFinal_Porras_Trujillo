@@ -1,0 +1,71 @@
+@if (estadisticas) {
+  <section class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-num">{{ estadisticas.total_reportes }}</span>
+      <span class="stat-label">Reportes Totales</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ estadisticas.porcentaje_atendidos ?? 0 | number: '1.0-1' }}%</span>
+      <span class="stat-label">Atendidos</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num"
+        >{{ estadisticas.tiempo_promedio_atencion_horas ?? 0 | number: '1.0-1' }} h</span
+      >
+      <span class="stat-label">Tiempo Promedio</span>
+    </div>
+  </section>
+}
+
+<section class="filtros-bar">
+  <select title="Filtrar por distrito" [(ngModel)]="filtroDistrito" (change)="cargarReportes()">
+    <option [ngValue]="undefined">Todos los distritos</option>
+    @for (d of distritos; track d.id) {
+      <option [ngValue]="d.id">{{ d.nombre }}</option>
+    }
+  </select>
+
+  <select title="Filtrar por distrito" [(ngModel)]="filtroEstado" (change)="cargarReportes()">
+    <option [ngValue]="undefined">Todos los estados</option>
+    @for (e of estados; track e.id) {
+      <option [ngValue]="e.id">{{ e.nombre }}</option>
+    }
+  </select>
+
+  @if (filtroDistrito || filtroEstado) {
+    <button (click)="limpiarFiltros()" class="btn-limpiar">Limpiar filtros</button>
+  }
+</section>
+
+@if (cargando) {
+  <p>Cargando reportes de Huancayo...</p>
+} @else if (reportes.length === 0) {
+  <div class="vacio">No hay reportes registrados con estos filtros.</div>
+} @else {
+  <div class="reportes-grid">
+    @for (rep of reportes; track rep.id) {
+      <article class="reporte-card">
+        @if (rep.url_imagen) {
+          <img
+            [src]="obtenerUrlImagen(rep.url_imagen)"
+            alt="Foto del reporte"
+            [title]="rep.titulo"
+            class="reporte-img"
+          />
+        }
+        <div class="reporte-body">
+          <div class="badges">
+            <span class="badge estado">{{ rep.estado.nombre }}</span>
+            <span class="badge gravedad" [class]="rep.nivel_gravedad.toLowerCase()">
+              {{ rep.nivel_gravedad }}
+            </span>
+          </div>
+          <h3>{{ rep.titulo }}</h3>
+          <p class="ubicacion">📍 {{ rep.distrito.nombre }} - {{ rep.direccion }}</p>
+          <p class="residuo">🗑️ {{ rep.tipo_residuo.nombre }}</p>
+          <a [routerLink]="['/reporte', rep.id]" class="btn-ver">Ver detalle</a>
+        </div>
+      </article>
+    }
+  </div>
+}

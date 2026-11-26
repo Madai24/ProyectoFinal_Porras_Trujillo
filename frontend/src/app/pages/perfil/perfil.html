@@ -1,0 +1,11 @@
+@if (usuario) {
+  <div class="perfil-card">
+    <h2>Mi Perfil</h2>
+    <p><strong>Nombre:</strong> {{ usuario.nombre_completo }}</p>
+    <p><strong>Correo:</strong> {{ usuario.email }}</p>
+    <p><strong>Rol:</strong> {{ usuario.rol }}</p>
+    <p><strong>Miembro desde:</strong> {{ usuario.fecha_registro | date: 'longDate' }}</p>
+  </div>
+} @else {
+  <p>Cargando datos del perfil...</p>
+}

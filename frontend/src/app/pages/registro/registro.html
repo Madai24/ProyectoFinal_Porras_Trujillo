@@ -1,0 +1,44 @@
+<div class="auth-card">
+  <h2>Crear Cuenta en Huellas Wanka</h2>
+  <p>Únete para reportar puntos críticos en Huancayo.</p>
+
+  @if (error) {
+    <div class="alerta-error">{{ error }}</div>
+  }
+
+  <form (ngSubmit)="registrar()">
+    <label>Nombre completo *</label>
+    <input
+      type="text"
+      [(ngModel)]="nombre_completo"
+      name="nombre_completo"
+      required
+      placeholder="Ej. Juan Pérez"
+    />
+
+    <label>Correo electrónico *</label>
+    <input
+      type="email"
+      [(ngModel)]="email"
+      name="email"
+      required
+      placeholder="correo@ejemplo.com"
+    />
+
+    <label>Contraseña (mínimo 8 caracteres) *</label>
+    <input
+      type="password"
+      [(ngModel)]="password"
+      name="password"
+      minlength="8"
+      required
+      placeholder="********"
+    />
+
+    <button type="submit" [disabled]="cargando">
+      {{ cargando ? 'Registrando...' : 'Registrarse' }}
+    </button>
+  </form>
+
+  <p class="auth-link">¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión aquí</a></p>
+</div>

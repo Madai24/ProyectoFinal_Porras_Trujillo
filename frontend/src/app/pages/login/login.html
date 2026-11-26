@@ -1,0 +1,28 @@
+<div class="auth-card">
+  <h2>Iniciar Sesión</h2>
+  <p>Ingresa con tu cuenta para gestionar reportes.</p>
+
+  @if (error) {
+    <div class="alerta-error">{{ error }}</div>
+  }
+
+  <form (ngSubmit)="iniciarSesion()">
+    <label>Correo electrónico *</label>
+    <input
+      type="email"
+      [(ngModel)]="email"
+      name="email"
+      required
+      placeholder="correo@ejemplo.com"
+    />
+
+    <label>Contraseña *</label>
+    <input type="password" [(ngModel)]="password" name="password" required placeholder="********" />
+
+    <button type="submit" [disabled]="cargando">
+      {{ cargando ? 'Ingresando...' : 'Ingresar' }}
+    </button>
+  </form>
+
+  <p class="auth-link">¿Aún no tienes cuenta? <a routerLink="/registro">Regístrate aquí</a></p>
+</div>

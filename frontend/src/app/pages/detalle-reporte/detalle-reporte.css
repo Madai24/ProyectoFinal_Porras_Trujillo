@@ -1,0 +1,12 @@
+.volver { display: inline-block; margin-bottom: 1rem; color: #2d6a4f; text-decoration: none; font-weight: bold; }
+.detalle-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+.detalle-img { width: 100%; max-height: 400px; object-fit: cover; }
+.detalle-info { padding: 2rem; }
+.badges { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; }
+.badge { padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.85rem; font-weight: bold; background: #e0f2fe; color: #0369a1; }
+.meta-lista { list-style: none; padding: 0; margin: 1.5rem 0; display: grid; gap: 0.5rem; }
+.admin-panel { background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 1rem; }
+.fila { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+.fila select { padding: 0.5rem; border-radius: 6px; border: 1px solid #ccc; }
+.btn-actualizar { background: #1d4ed8; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; }
+.btn-eliminar { background: #dc2626; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer; }

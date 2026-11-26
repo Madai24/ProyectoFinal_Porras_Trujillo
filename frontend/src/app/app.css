@@ -1,0 +1,15 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #1b4332;
+  color: white;
+  font-family: system-ui, sans-serif;
+}
+.nav-brand a { color: white; text-decoration: none; font-size: 1.3rem; font-weight: bold; }
+.nav-links { display: flex; gap: 1rem; align-items: center; }
+.nav-links a { color: #d8f3dc; text-decoration: none; font-weight: 500; }
+.btn-primario { background-color: #40916c; color: white !important; padding: 0.5rem 1rem; border-radius: 6px; }
+.btn-salir { background: transparent; border: 1px solid #95d5b2; color: #d8f3dc; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; }
+.contenedor { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; font-family: system-ui, sans-serif; }

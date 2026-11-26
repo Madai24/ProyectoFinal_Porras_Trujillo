@@ -1,0 +1,75 @@
+<div class="form-card">
+  <h2>Nuevo Reporte Ambiental</h2>
+  <p>Registra un punto crítico de basura o desmonte en Huancayo.</p>
+
+  @if (error) {
+    <div class="alerta-error">{{ error }}</div>
+  }
+
+  <form (ngSubmit)="enviarReporte()">
+    <label>Título del reporte *</label>
+    <input
+      type="text"
+      [(ngModel)]="titulo"
+      name="titulo"
+      required
+      placeholder="Ej. Acumulación de desmonte en esquina"
+    />
+
+    <label>Distrito *</label>
+    <select title="Distrito" [(ngModel)]="distrito_id" name="distrito_id" required>
+      <option [ngValue]="undefined" disabled>Seleccione un distrito</option>
+      @for (d of distritos; track d.id) {
+        <option [ngValue]="d.id">{{ d.nombre }}</option>
+      }
+    </select>
+
+    <label>Tipo de residuo *</label>
+    <select title="Tipo de residuo" [(ngModel)]="tipo_residuo_id" name="tipo_residuo_id" required>
+      <option [ngValue]="undefined" disabled>Seleccione tipo de residuo</option>
+      @for (t of tiposResiduo; track t.id) {
+        <option [ngValue]="t.id">{{ t.nombre }}</option>
+      }
+    </select>
+
+    <label>Nivel de gravedad *</label>
+    <select title="Nivel de gravedad" [(ngModel)]="nivel_gravedad" name="nivel_gravedad" required>
+      <option value="Baja">Baja</option>
+      <option value="Media">Media</option>
+      <option value="Urgente">Urgente</option>
+    </select>
+
+    <label>Dirección exacta *</label>
+    <input
+      type="text"
+      [(ngModel)]="direccion"
+      name="direccion"
+      required
+      placeholder="Ej. Av. Ferrocarril y Jr. Piura"
+    />
+
+    <label>Referencia (opcional)</label>
+    <input
+      type="text"
+      [(ngModel)]="referencia"
+      name="referencia"
+      placeholder="Ej. Frente al parque..."
+    />
+
+    <label>Descripción detallada *</label>
+    <textarea
+      [(ngModel)]="descripcion"
+      name="descripcion"
+      rows="3"
+      required
+      placeholder="Describe la situación..."
+    ></textarea>
+
+    <label>Fotografía de evidencia</label>
+    <input type="file" title="Subir fotografía" accept="image/*" (change)="onFileChange($event)" />
+
+    <button type="submit" [disabled]="cargando">
+      {{ cargando ? 'Enviando reporte...' : 'Publicar Reporte' }}
+    </button>
+  </form>
+</div>

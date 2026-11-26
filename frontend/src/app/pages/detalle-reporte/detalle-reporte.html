@@ -1,0 +1,58 @@
+<a routerLink="/" class="volver">← Volver al listado</a>
+
+@if (reporte) {
+  <div class="detalle-card">
+    @if (reporte.url_imagen) {
+      <img
+        [src]="obtenerUrlImagen(reporte.url_imagen)"
+        alt="Evidencia del reporte"
+        [title]="reporte.titulo"
+        class="detalle-img"
+      />
+    }
+    <div class="detalle-info">
+      <div class="badges">
+        <span class="badge estado">{{ reporte.estado.nombre }}</span>
+        <span class="badge gravedad">{{ reporte.nivel_gravedad }}</span>
+      </div>
+
+      <h2>{{ reporte.titulo }}</h2>
+      <p class="desc">{{ reporte.descripcion }}</p>
+
+      <div class="meta-lista">
+        <div><strong>Distrito:</strong> {{ reporte.distrito.nombre }}</div>
+        <div><strong>Dirección:</strong> {{ reporte.direccion }}</div>
+        @if (reporte.referencia) {
+          <div><strong>Referencia:</strong> {{ reporte.referencia }}</div>
+        }
+        <div>
+          <strong>Fecha:</strong>
+          {{ reporte.fecha_creacion + 'Z' | date: 'medium' : 'America/Lima' }}
+        </div>
+        <div><strong>Reportado por:</strong> {{ reporte.autor }}</div>
+      </div>
+
+      @if (
+        usuario?.rol?.toLowerCase() === 'administrador' || usuario?.rol?.toLowerCase() === 'admin'
+      ) {
+        <div class="admin-panel">
+          <label>Cambiar estado (Administrador):</label>
+          <div class="fila">
+            <select title="Nuevo estado" [(ngModel)]="nuevoEstadoId">
+              @for (e of estados; track e.id) {
+                <option [ngValue]="e.id">{{ e.nombre }}</option>
+              }
+            </select>
+            <button (click)="cambiarEstado()" class="btn-actualizar">Guardar estado</button>
+          </div>
+        </div>
+      }
+
+      @if (authService.estaAutenticado()) {
+        <button (click)="eliminarReporte()" class="btn-eliminar">Eliminar reporte</button>
+      }
+    </div>
+  </div>
+} @else {
+  <p>Cargando detalle del reporte...</p>
+}
